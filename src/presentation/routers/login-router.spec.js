@@ -1,5 +1,5 @@
 const LoginRouter = require("./login-router");
-const MissingParamError = require("../errors/missing-param-error");
+const { MissingParamError, UnauthorizedError } = require("../errors");
 
 function makeSut() {
   class AuthUseCaseSpy {
@@ -62,5 +62,6 @@ describe("login router", () => {
     const httpRequest = { body: { email: "invalid", password: "invalid" } };
     const httpResponse = sut.route(httpRequest);
     expect(httpResponse.statusCode).toBe(401);
+    expect(httpResponse.body).toEqual(new UnauthorizedError());
   });
 });
