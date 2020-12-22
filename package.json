@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-tdd-clean",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Hércules HRsniper <63937242+HRsniper@users.noreply.github.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
