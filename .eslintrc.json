@@ -9,5 +9,10 @@
     "sourceType": "module"
   },
   "plugins": ["jest", "prettier"],
-  "rules": { "comma-dangle": ["warn", "never"] }
+  "rules": { "comma-dangle": ["warn", "never"] },
+  "settings": {
+    "jest": {
+      "version": 26
+    }
+  }
 }
