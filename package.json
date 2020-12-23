@@ -14,7 +14,8 @@
     "prettier": "^2.2.1"
   },
   "scripts": {
-    "test:watch": "jest --watchAll",
-    "test": "jest"
+    "test": "jest --colors",
+    "test:watchAll": "jest --watchAll --colors",
+    "test:watch": "jest --watch --colors"
   }
 }
