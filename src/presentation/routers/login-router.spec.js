@@ -1,5 +1,5 @@
 const LoginRouter = require("./login-router");
-const { MissingParamError, UnauthorizedError, ServerError } = require("../errors");
+const { MissingParamError, UnauthorizedError, ServerError, InvalidParamError } = require("../errors");
 
 function makeAuthUseCase() {
   class AuthUseCaseSpy {
@@ -15,10 +15,24 @@ function makeAuthUseCase() {
 
 function makeSut() {
   const authUseCaseSpy = new makeAuthUseCase();
+  const emailValidatorSpy = new makeEmailValidator();
   authUseCaseSpy.accessToken = "validToken";
-  const sut = new LoginRouter(authUseCaseSpy);
+  const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy);
 
-  return { sut, authUseCaseSpy };
+  return { sut, authUseCaseSpy, emailValidatorSpy };
+}
+
+function makeEmailValidator() {
+  class EmailValidatorSpy {
+    isValid(email) {
+      this.email = email;
+      return this.isEmailValid;
+    }
+  }
+
+  const emailValidatorSpy = new EmailValidatorSpy();
+  emailValidatorSpy.isEmailValid = true;
+  return emailValidatorSpy;
 }
 
 function makeAuthUseCaseWithError() {
@@ -122,13 +136,14 @@ describe("login router", () => {
     expect(httpResponse.statusCode).toBe(500);
   });
 
-  // test("should return 400 if an invalid email is provided", async () => {
-  //   const { sut } = makeSut();
-  //   const httpRequest = {
-  //     body: { email: "invalid@email.com", password: "any" }
-  //   };
-  //   const httpResponse = await sut.route(httpRequest);
-  //   expect(httpResponse.statusCode).toBe(400);
-  //   expect(httpResponse.body).toEqual(new InvalidParamError("email"));
-  // });
+  test("should return 400 if an invalid email is provided", async () => {
+    const { sut, emailValidatorSpy } = makeSut();
+    emailValidatorSpy.isEmailValid = false;
+    const httpRequest = {
+      body: { email: "invalid@email.com", password: "any" }
+    };
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toBe(400);
+    expect(httpResponse.body).toEqual(new InvalidParamError("email"));
+  });
 });
