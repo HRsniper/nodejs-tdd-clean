@@ -1,4 +1,5 @@
 const HttpResponse = require("../helpers/http-response");
+const { MissingParamError } = require("../errors");
 
 module.exports = class LoginRouter {
   constructor(authUseCase) {
@@ -7,14 +8,22 @@ module.exports = class LoginRouter {
 
   async route(httpRequest) {
     try {
+      // if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.auth) {
+      //   return HttpResponse.serverError();
+      // }
+
       const { email, password } = httpRequest.body;
 
       if (!email) {
-        return HttpResponse.badRequest("email");
+        return HttpResponse.badRequest(new MissingParamError("email"));
       }
 
+      // if (!/email/.test(email)) {
+      //   return HttpResponse.badRequest(new MissingParamError("email"));
+      // }
+
       if (!password) {
-        return HttpResponse.badRequest("password");
+        return HttpResponse.badRequest(new MissingParamError("password"));
       }
 
       const accessToken = await this.authUseCase.auth(email, password);
@@ -26,10 +35,6 @@ module.exports = class LoginRouter {
       return HttpResponse.ok({ accessToken });
       // return HttpResponse.ok(accessToken);
     } catch (error) {
-      // if (!httpRequest || !httpRequest.body || !this.authUseCase || !this.authUseCase.auth) {
-      //   return HttpResponse.serverError();
-      // }
-
       // console.error(error);
       return HttpResponse.serverError();
     }
