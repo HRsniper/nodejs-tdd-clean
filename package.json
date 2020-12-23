@@ -4,7 +4,9 @@
   "main": "index.js",
   "author": "Hércules HRsniper <63937242+HRsniper@users.noreply.github.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "validator": "^13.5.2"
+  },
   "devDependencies": {
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
