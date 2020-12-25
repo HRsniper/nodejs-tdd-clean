@@ -20,7 +20,7 @@
     "test": "jest --colors",
     "test:watchAll": "jest --watchAll --colors",
     "test:integration": "jest --watch --colors -c jest.config.integration.js",
-    "test:unit": "jest --watch --colors -c jest.config.unit.js",
+    "test:unit": "jest --watch --colors --noStackTrace -c jest.config.unit.js",
     "test:ci": "jest --colors --coverage --silent"
   }
 }
