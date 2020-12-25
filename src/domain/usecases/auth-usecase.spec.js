@@ -44,4 +44,10 @@ describe("Auth UseCase", () => {
     const promise = sut.auth("any@email.com", "any");
     await expect(promise).rejects.toThrow(new InvalidParamError("loadUserByEmailRepository"));
   });
+
+  test("Should return null if LoadUserByEmailRepository is return null", async () => {
+    const { sut } = makeSut();
+    const accessToken = await sut.auth("invalid@email.com", "any");
+    expect(accessToken).toBeNull();
+  });
 });
