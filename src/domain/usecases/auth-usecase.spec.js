@@ -10,10 +10,19 @@ function makeSut() {
       return this.user;
     }
   }
+
+  class EncrypterSpy {
+    async compare(password, hashedPassword) {
+      this.password = password;
+      this.hashedPassword = hashedPassword;
+    }
+  }
+
   const loadUserByEmailRepositorySpy = new LoadUserByEmailRepositorySpy();
-  loadUserByEmailRepositorySpy.user = {};
-  const sut = new AuthUseCase(loadUserByEmailRepositorySpy);
-  return { sut, loadUserByEmailRepositorySpy };
+  loadUserByEmailRepositorySpy.user = { password: "hashedPassword" };
+  const encrypterSpy = new EncrypterSpy();
+  const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy);
+  return { sut, loadUserByEmailRepositorySpy, encrypterSpy };
 }
 
 describe("Auth UseCase", () => {
@@ -60,5 +69,12 @@ describe("Auth UseCase", () => {
     const { sut } = makeSut();
     const accessToken = await sut.auth("valid@email.com", "invalid");
     expect(accessToken).toBeNull();
+  });
+
+  test("Should call Encrypter with correct values", async () => {
+    const { sut, loadUserByEmailRepositorySpy, encrypterSpy } = makeSut();
+    await sut.auth("valid@email.com", "any");
+    expect(encrypterSpy.password).toBe("any");
+    expect(encrypterSpy.hashedPassword).toBe(loadUserByEmailRepositorySpy.user.password);
   });
 });
