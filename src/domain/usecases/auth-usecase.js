@@ -22,6 +22,6 @@ module.exports = class AuthUseCase {
       return null;
     }
 
-    // return this.accessToken;
+    return null;
   }
 };
