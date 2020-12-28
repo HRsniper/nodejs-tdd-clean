@@ -57,6 +57,16 @@ function makeUpdateAccessTokenRepository() {
   return { updateAccessTokenRepositorySpy };
 }
 
+function makeUpdateAccessTokenRepositoryWithError() {
+  class UpdateAccessTokenRepositoryWithErrorSpy {
+    async update() {
+      throw new Error();
+    }
+  }
+  const updateAccessTokenRepositoryWithErrorSpy = new UpdateAccessTokenRepositoryWithErrorSpy();
+  return { updateAccessTokenRepositoryWithErrorSpy };
+}
+
 function makeLoadUserByEmailRepository() {
   class LoadUserByEmailRepositorySpy {
     async load(email) {
@@ -169,7 +179,7 @@ describe("Auth UseCase", () => {
     const invalid = {};
     const loadUserByEmailRepository = makeLoadUserByEmailRepository();
     const encrypter = makeEncrypter();
-    // const tokenGenerator = makeTokenGenerator();
+    const tokenGenerator = makeTokenGenerator();
     const suts = [].concat(
       new AuthUseCase(),
       new AuthUseCase({ loadUserByEmailRepository: null }),
@@ -185,6 +195,18 @@ describe("Auth UseCase", () => {
         loadUserByEmailRepository,
         encrypter,
         tokenGenerator: invalid
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator,
+        updateAccessTokenRepository: null
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator,
+        updateAccessTokenRepository: invalid
       })
     );
     for (const sut of suts) {
@@ -196,7 +218,7 @@ describe("Auth UseCase", () => {
   test("Should throw if any dependencies throws", async () => {
     const loadUserByEmailRepository = makeLoadUserByEmailRepository();
     const encrypter = makeEncrypter();
-    // const tokenGenerator = makeTokenGenerator();
+    const tokenGenerator = makeTokenGenerator();
     const suts = [].concat(
       new AuthUseCase({ loadUserByEmailRepository: makeLoadUserByEmailRepositoryWithError() }),
       new AuthUseCase({ loadUserByEmailRepository, encrypter: makeEncrypterWithError() }),
@@ -204,6 +226,12 @@ describe("Auth UseCase", () => {
         loadUserByEmailRepository,
         encrypter,
         tokenGenerator: makeTokenGeneratorWithError()
+      }),
+      new AuthUseCase({
+        loadUserByEmailRepository,
+        encrypter,
+        tokenGenerator,
+        updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError()
       })
     );
     for (const sut of suts) {
