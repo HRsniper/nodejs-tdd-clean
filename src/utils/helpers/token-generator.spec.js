@@ -5,7 +5,8 @@ const TokenGenerator = require("./token-generator");
 
 describe("Token Generator", () => {
   function makeSut() {
-    const sut = new TokenGenerator();
+    const secretSpy = "secretSpy";
+    const sut = new TokenGenerator(secretSpy);
 
     return { sut };
   }
@@ -27,6 +28,7 @@ describe("Token Generator", () => {
     const { sut } = makeSut();
     await sut.generate("any_id");
     expect(jwt.payload).toBe("any_id");
+    expect(jwt.secret).toBe(sut.secret);
   });
 
   // test("Should throw if no params is provided", async () => {

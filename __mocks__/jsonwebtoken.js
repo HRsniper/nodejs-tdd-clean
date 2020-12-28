@@ -1,5 +1,7 @@
 module.exports = {
   token: "any_token",
+  payload: "",
+  secret: "",
 
   sign(payload, secret) {
     this.payload = payload;
