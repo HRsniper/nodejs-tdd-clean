@@ -8,6 +8,10 @@ module.exports = class TokenGenerator {
   async generate(payload) {
     // this.payload = payload;
 
+    if (!payload) {
+      throw new MissingParamError("payload");
+    }
+
     if (!this.secret) {
       throw new MissingParamError("secret");
     }

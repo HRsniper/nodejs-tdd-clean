@@ -37,7 +37,9 @@ describe("Token Generator", () => {
     await expect(promise).rejects.toThrow(new MissingParamError("secret"));
   });
 
-  // test("Should throw if no params is provided", async () => {
-
-  // });
+  test("Should throw if no payload is provided", async () => {
+    const { sut } = makeSut();
+    const promise = sut.generate();
+    await expect(promise).rejects.toThrow(new MissingParamError("payload"));
+  });
 });
