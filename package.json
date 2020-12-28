@@ -5,6 +5,7 @@
   "author": "Hércules HRsniper <63937242+HRsniper@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "validator": "^13.5.2"
   },
   "devDependencies": {
