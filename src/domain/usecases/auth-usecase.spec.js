@@ -46,6 +46,17 @@ function makeTokenGeneratorWithError() {
   return { tokenGeneratorWithErrorSpy };
 }
 
+function makeUpdateAccessTokenRepository() {
+  class UpdateAccessTokenRepositorySpy {
+    async update(userId, accessToken) {
+      this.userId = userId;
+      this.accessToken = accessToken;
+    }
+  }
+  const updateAccessTokenRepositorySpy = new UpdateAccessTokenRepositorySpy();
+  return { updateAccessTokenRepositorySpy };
+}
+
 function makeLoadUserByEmailRepository() {
   class LoadUserByEmailRepositorySpy {
     async load(email) {
@@ -73,12 +84,20 @@ function makeSut() {
   const { loadUserByEmailRepositorySpy } = makeLoadUserByEmailRepository();
   const { encrypterSpy } = makeEncrypter();
   const { tokenGeneratorSpy } = makeTokenGenerator();
+  const { updateAccessTokenRepositorySpy } = makeUpdateAccessTokenRepository();
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
     encrypter: encrypterSpy,
-    tokenGenerator: tokenGeneratorSpy
+    tokenGenerator: tokenGeneratorSpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy
   });
-  return { sut, loadUserByEmailRepositorySpy, encrypterSpy, tokenGeneratorSpy };
+  return {
+    sut,
+    loadUserByEmailRepositorySpy,
+    encrypterSpy,
+    tokenGeneratorSpy,
+    updateAccessTokenRepositorySpy
+  };
 }
 
 describe("Auth UseCase", () => {
@@ -132,6 +151,18 @@ describe("Auth UseCase", () => {
     const accessToken = await sut.auth("valid@email.com", "valid");
     expect(accessToken).toBe(tokenGeneratorSpy.accessToken);
     expect(accessToken).toBeTruthy();
+  });
+
+  test("Should call UpdateAccessTokenRepository with correct values userId and accessToken", async () => {
+    const {
+      sut,
+      loadUserByEmailRepositorySpy,
+      tokenGeneratorSpy,
+      updateAccessTokenRepositorySpy
+    } = makeSut();
+    await sut.auth("valid@email.com", "valid");
+    expect(updateAccessTokenRepositorySpy.userId).toBe(loadUserByEmailRepositorySpy.user.id);
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe(tokenGeneratorSpy.accessToken);
   });
 
   test("Should throw if no invalid dependencies is provided", async () => {
