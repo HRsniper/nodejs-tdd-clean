@@ -23,9 +23,11 @@ describe("Token Generator", () => {
     expect(token).toBe(jwt.token);
   });
 
-  // test("Should call JWT with correct values", async () => {
-
-  // });
+  test("Should call JWT with correct values", async () => {
+    const { sut } = makeSut();
+    await sut.generate("any_id");
+    expect(jwt.payload).toBe("any_id");
+  });
 
   // test("Should throw if no params is provided", async () => {
 
