@@ -5,6 +5,7 @@
   "author": "Hércules HRsniper <63937242+HRsniper@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "@shelf/jest-mongodb": "^1.2.3",
     "bcrypt": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.3",
