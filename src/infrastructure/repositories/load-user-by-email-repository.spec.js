@@ -2,8 +2,15 @@ const { MongoClient } = require("mongodb");
 
 const LoadUserByEmailRepository = require("./load-user-by-email-repository");
 
+let db, client;
+
+function makeSut() {
+  const userModel = db.collection("users");
+  const sut = new LoadUserByEmailRepository(userModel);
+  return { sut, userModel };
+}
+
 describe("LoadUserByEmail Repository", () => {
-  let db, client;
   beforeAll(async () => {
     client = await MongoClient.connect(process.env.MONGO_URL, {
       useNewUrlParser: true,
@@ -21,16 +28,14 @@ describe("LoadUserByEmail Repository", () => {
   });
 
   test("Should return null if no user is found", async () => {
-    const userModel = db.collection("users");
-    const sut = new LoadUserByEmailRepository(userModel);
+    const { sut } = makeSut();
     const user = await sut.load("invalid@email.com");
     expect(user).toBeNull();
   });
 
   test("Should return user if user is found", async () => {
-    const userModel = db.collection("users");
+    const { sut, userModel } = makeSut();
     await userModel.insertOne({ email: "valid@email.com" });
-    const sut = new LoadUserByEmailRepository(userModel);
     const user = await sut.load("valid@email.com");
     expect(user.email).toBe("valid@email.com");
   });
