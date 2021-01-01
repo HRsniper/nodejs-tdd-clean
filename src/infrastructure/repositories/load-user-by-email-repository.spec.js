@@ -35,8 +35,8 @@ describe("LoadUserByEmail Repository", () => {
 
   test("Should return user if user is found", async () => {
     const { sut, userModel } = makeSut();
-    await userModel.insertOne({ email: "valid@email.com" });
+    const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
     const user = await sut.load("valid@email.com");
-    expect(user.email).toBe("valid@email.com");
+    expect(user).toEqual(fakeUser.ops[0]);
   });
 });
