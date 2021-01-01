@@ -37,6 +37,6 @@ describe("LoadUserByEmail Repository", () => {
     const { sut, userModel } = makeSut();
     const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
     const user = await sut.load("valid@email.com");
-    expect(user).toEqual(fakeUser.ops[0]);
+    expect(user).toEqual({ _id: fakeUser.ops[0]._id, password: fakeUser.ops[0].password });
   });
 });
