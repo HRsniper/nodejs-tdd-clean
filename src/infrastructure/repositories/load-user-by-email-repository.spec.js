@@ -1,8 +1,8 @@
-const { MongoClient } = require("mongodb");
-
 const LoadUserByEmailRepository = require("./load-user-by-email-repository");
+const { MissingParamError } = require("../../utils/errors");
+const MongoHelper = require("../helpers/mongo-helper");
 
-let db, client;
+let db;
 
 function makeSut() {
   const userModel = db.collection("users");
@@ -12,11 +12,8 @@ function makeSut() {
 
 describe("LoadUserByEmail Repository", () => {
   beforeAll(async () => {
-    client = await MongoClient.connect(process.env.MONGO_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-    db = await client.db();
+    await MongoHelper.connect(process.env.MONGO_URL);
+    db = await MongoHelper.getDatabase();
   });
 
   beforeEach(async () => {
@@ -24,7 +21,7 @@ describe("LoadUserByEmail Repository", () => {
   });
 
   afterAll(async () => {
-    await client.close();
+    await MongoHelper.close();
   });
 
   test("Should return null if no user is found", async () => {
@@ -38,5 +35,11 @@ describe("LoadUserByEmail Repository", () => {
     const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
     const user = await sut.load("valid@email.com");
     expect(user).toEqual({ _id: fakeUser.ops[0]._id, password: fakeUser.ops[0].password });
+  });
+
+  test("Should throw if no email is provided", async () => {
+    const sut = makeSut();
+    const promise = sut.load();
+    await expect(promise).rejects.toThrow(new MissingParamError("email"));
   });
 });
