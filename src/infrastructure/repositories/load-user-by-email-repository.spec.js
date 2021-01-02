@@ -37,6 +37,12 @@ describe("LoadUserByEmail Repository", () => {
     expect(user).toEqual({ _id: fakeUser.ops[0]._id, password: fakeUser.ops[0].password });
   });
 
+  test("Should throw if no userModel is provided", async () => {
+    const sut = new LoadUserByEmailRepository();
+    const promise = sut.load("any@email.com");
+    await expect(promise).rejects.toThrow();
+  });
+
   test("Should throw if no email is provided", async () => {
     const sut = makeSut();
     const promise = sut.load();
