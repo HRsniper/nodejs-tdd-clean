@@ -1,11 +1,12 @@
-const express = require("express");
+// const express = require("express");
 
 const cors = require("../middlewares/cors");
+const jsonParser = require("../middlewares/json-parser");
 
 module.exports = (app) => {
   app.disable("x-powered-by");
 
-  app.use(express.json());
+  app.use(jsonParser);
 
   app.use(cors);
 };
