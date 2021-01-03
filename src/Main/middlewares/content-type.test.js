@@ -10,4 +10,13 @@ describe("Middleware Content Type", () => {
 
     await requestSuperTest(app).get("/test_content_type").expect("content-type", /json/);
   });
+
+  test("Should return xml content-type if forced for test", async () => {
+    app.get("/test_content_type_xml", (request, response) => {
+      response.type("xml");
+      response.send("");
+    });
+
+    await requestSuperTest(app).get("/test_content_type_xml").expect("content-type", /xml/);
+  });
 });
