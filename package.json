@@ -24,11 +24,11 @@
     "supertest": "^6.0.1"
   },
   "scripts": {
-    "test": "jest --colors",
-    "test:watchAll": "jest --watchAll --colors",
-    "test:integration": "jest --watch --colors -c jest.config.integration.js",
-    "test:unit": "jest --watch --colors --noStackTrace -c jest.config.unit.js",
-    "test:ci": "jest --colors --coverage --silent",
+    "test": "jest --colors --runInBand",
+    "test:watchAll": "jest --watchAll --colors --runInBand",
+    "test:integration": "jest --watch --colors --runInBand -c jest.config.integration.js",
+    "test:unit": "jest --watch --colors --runInBand --noStackTrace -c jest.config.unit.js",
+    "test:ci": "jest --coverage --colors --runInBand --silent",
     "test:not": "",
     "dev": "nodemon src/Main/index.js",
     "start": "node src/Main/index.js"
