@@ -25,7 +25,8 @@ describe("Login Routes", () => {
       email: "valid@email.com",
       password: bcrypt.hashSync("hashed_password", 10)
     });
-    console.log(bcrypt.hashSync("hashed_password", 10));
+
+    // console.log(bcrypt.hashSync("hashed_password", 10));
 
     await requestSuperTest(app)
       .post("/api/login")
