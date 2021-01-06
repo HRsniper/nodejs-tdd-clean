@@ -5,9 +5,8 @@ const MongoHelper = require("../helpers/mongo-helper");
 let db;
 
 function makeSut() {
-  const userModel = db.collection("users");
-  const sut = new LoadUserByEmailRepository(userModel);
-  return { sut, userModel };
+  const sut = new LoadUserByEmailRepository();
+  return { sut };
 }
 
 describe("LoadUserByEmail Repository", () => {
@@ -31,16 +30,10 @@ describe("LoadUserByEmail Repository", () => {
   });
 
   test("Should return user if user is found", async () => {
-    const { sut, userModel } = makeSut();
-    const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
+    const { sut } = makeSut();
+    const fakeUser = await db.collection("users").insertOne({ email: "valid@email.com", password: "any" });
     const user = await sut.load("valid@email.com");
     expect(user).toEqual({ _id: fakeUser.ops[0]._id, password: fakeUser.ops[0].password });
-  });
-
-  test("Should throw if no userModel is provided", async () => {
-    const sut = new LoadUserByEmailRepository();
-    const promise = sut.load("any@email.com");
-    await expect(promise).rejects.toThrow();
   });
 
   test("Should throw if no email is provided", async () => {
