@@ -21,17 +21,4 @@ describe("Mongo Helper", () => {
 
     // afterAll
   });
-
-  test("Should reconnect when getDatabase() is invoked and client is disconnected", async () => {
-    // beforeAll
-    expect(sut.db).toBeTruthy();
-
-    await sut.disconnect();
-    expect(sut.db).toBeFalsy();
-
-    await sut.getDatabase();
-    expect(sut.db).toBeTruthy();
-
-    // afterAll
-  });
 });

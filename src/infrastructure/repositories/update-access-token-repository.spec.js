@@ -2,16 +2,20 @@ const UpdateAccessTokenRepository = require("./update-access-token-repository");
 const MongoHelper = require("../helpers/mongo-helper");
 const { MissingParamError } = require("../../utils/errors");
 
-let db, fakeUser_id;
+let userModel, fakeUser_id;
+
+function makeSut() {
+  const sut = new UpdateAccessTokenRepository();
+  return { sut };
+}
 
 describe("UpdateAccessToken Repository", () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
-    db = await MongoHelper.getDatabase();
+    userModel = await MongoHelper.getCollection("users");
   });
 
   beforeEach(async () => {
-    const userModel = db.collection("users");
     await userModel.deleteMany();
 
     const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
@@ -22,16 +26,11 @@ describe("UpdateAccessToken Repository", () => {
     await MongoHelper.close();
   });
 
-  function makeSut() {
-    const sut = new UpdateAccessTokenRepository();
-    return { sut };
-  }
-
   test("Should update the user with the given accessToken", async () => {
     const { sut } = makeSut();
 
     await sut.update(fakeUser_id, "valid_token");
-    const updatedFakeUser = await db.collection("users").findOne({ _id: fakeUser_id });
+    const updatedFakeUser = await userModel.findOne({ _id: fakeUser_id });
     expect(updatedFakeUser.accessToken).toBe("valid_token");
   });
 

@@ -2,7 +2,7 @@ const LoadUserByEmailRepository = require("./load-user-by-email-repository");
 const { MissingParamError } = require("../../utils/errors");
 const MongoHelper = require("../helpers/mongo-helper");
 
-let db;
+let userModel;
 
 function makeSut() {
   const sut = new LoadUserByEmailRepository();
@@ -12,11 +12,11 @@ function makeSut() {
 describe("LoadUserByEmail Repository", () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL);
-    db = await MongoHelper.getDatabase();
+    userModel = await MongoHelper.getCollection("users");
   });
 
   beforeEach(async () => {
-    await db.collection("users").deleteMany();
+    await userModel.deleteMany();
   });
 
   afterAll(async () => {
@@ -31,7 +31,7 @@ describe("LoadUserByEmail Repository", () => {
 
   test("Should return user if user is found", async () => {
     const { sut } = makeSut();
-    const fakeUser = await db.collection("users").insertOne({ email: "valid@email.com", password: "any" });
+    const fakeUser = await userModel.insertOne({ email: "valid@email.com", password: "any" });
     const user = await sut.load("valid@email.com");
     expect(user).toEqual({ _id: fakeUser.ops[0]._id, password: fakeUser.ops[0].password });
   });
